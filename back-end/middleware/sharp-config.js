@@ -10,7 +10,6 @@ module.exports = async (req, res, next) => {
     //     }
     // });
     try { 
-        console.log(req.file)
         if (req.file) {
             const { buffer, originalname } = req.file;
             const timestamp = new Date().toISOString();

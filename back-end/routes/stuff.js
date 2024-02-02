@@ -7,8 +7,8 @@ const auth = require('../middleware/auth');
 const multer = require('../middleware/multer-config');
 const sharp = require('../middleware/sharp-config')
 
-router.post('/', auth ,  multer,  stuffCtrl.createBook );
-router.put('/:id', auth, multer, stuffCtrl.modifyBook );
+router.post('/', auth ,  multer, sharp,  stuffCtrl.createBook );
+router.put('/:id', auth, multer, sharp, stuffCtrl.modifyBook );
 router.delete('/:id', auth, stuffCtrl.deleteBook );
 router.get('/', stuffCtrl.getAllBook );
 router.get('/bestrating', stuffCtrl.getBestRating );
