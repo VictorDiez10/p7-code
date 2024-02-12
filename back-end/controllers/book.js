@@ -7,10 +7,11 @@ exports.createBook = (req, res, next) => {
     const bookObject = JSON.parse(req.body.book);
     delete bookObject._id;
     delete bookObject._userId;
+    console.log(req.file.originalname)
     const book = new Book({
         ...bookObject,
         userId: req.auth.userId,
-        imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename.replace(/\.jpeg|\.jpg|\.png/g,'_')+'thumb.webp'}`,
+        imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.originalname.replace(/\.jpeg|\.jpg|\.png/g,'_')+'thumb.webp'}`,
         ratings: { 
             userId: req.auth.userId,
             grade: bookObject.ratings[0].grade
@@ -18,14 +19,8 @@ exports.createBook = (req, res, next) => {
         averageRating: bookObject.ratings[0].grade
     });
     book.save()
-    .then(() =>
-    {fs.unlink(`images/${req.file.filename}`, () => {
-        Book.deleteOne({ _id: req.params.id })
         .then(() =>  res.status(200).json({message: 'Objet enregistré !'}))
-        .catch(error => res.status(401).json({ error }));
-    })}
-    )
-    .catch(error => { res.status(400).json( { error })})
+        .catch(error => { res.status(400).json( { error })})
 };
 
 exports.modifyBook = (req, res, next) => {
@@ -36,30 +31,18 @@ exports.modifyBook = (req, res, next) => {
             if(book.userId != req.auth.userId) {
                 res.status(401).json({ message: 'Non-autorisé'});
             } else {
-                const filename = book.imageUrl.split('/images/')[1];
-                fs.unlink(`images/${filename}`, (error) => {
+                const filenameWebp = book.imageUrl.split('/images/')[1];
+                fs.unlink(`images/${filenameWebp}`, (error) => {
                     if (error) {
                         console.log(error)
                     }
                 });
-                const filenamePng = book.imageUrl.split('/images/')[1];
-                console.log(filenamePng)
-                fs.unlink(`images/${filename}.png`, (error) => {
-                    if (error) {
-                        console.log(error)
-                    }
-                })
             }
         })
         .catch(error => res.status(500).json({ error }));
         
         bookObject = req.body;
-        bookObject.imageUrl = `${req.protocol}://${req.get('host')}/images/${req.file.filename.replace(/\.jpeg|\.jpg|\.png/g,'_')+'thumb.webp'}`
-        // fs.unlink(`images/${req.file.filename}`, (error) => {
-        //     if (error) {
-        //         console.log(error)
-        //     }
-        // })
+        bookObject.imageUrl = `${req.protocol}://${req.get('host')}/images/${req.file.originalname.replace(/\.jpeg|\.jpg|\.png/g,'_')+'thumb.webp'}`
     } else {
         bookObject = req.body
     }

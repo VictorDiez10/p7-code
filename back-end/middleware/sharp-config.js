@@ -1,7 +1,4 @@
-
 const sharp = require('sharp');
-
-const fs = require('fs')
 
 module.exports = async (req, res, next) => {
     // fs.access("./images", (error) => {
@@ -11,10 +8,8 @@ module.exports = async (req, res, next) => {
     // });
     try { 
         if (req.file) {
-            const { buffer, originalname } = req.file;
-            const timestamp = new Date().toISOString();
-            const ref = `${timestamp}-${originalname}.webp`;
-            sharp(req.file.path)
+            const path = req.file.path;
+            sharp(path)
                 .resize({height: 400})
                 .webp({ quality: 80 })
                 .toFile(req.file.path.replace(/\.jpeg|\.jpg|\.png/g,'_')+'thumb.webp');

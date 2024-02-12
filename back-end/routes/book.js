@@ -6,9 +6,10 @@ const bookCtrl = require('../controllers/book');
 const auth = require('../middleware/auth');
 const multer = require('../middleware/multer-config');
 const sharp = require('../middleware/sharp-config')
+const {uploadMiddleware, imageProcessingMiddleware} = require('../middleware/image-configurator')
 
-router.post('/', auth ,  multer, sharp,  bookCtrl.createBook );
-router.put('/:id', auth, multer, sharp, bookCtrl.modifyBook );
+router.post('/', auth , uploadMiddleware, imageProcessingMiddleware,  bookCtrl.createBook );
+router.put('/:id', auth, uploadMiddleware, imageProcessingMiddleware, bookCtrl.modifyBook );
 router.delete('/:id', auth, bookCtrl.deleteBook );
 router.get('/', bookCtrl.getAllBook );
 router.get('/bestrating', bookCtrl.getBestRating );

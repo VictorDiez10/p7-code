@@ -1,9 +1,10 @@
-//Importation des différents packets
+//Importation des différents librairie
 const express = require('express');
 const mongoose = require('mongoose');
 const path = require('path');
 const rateLimit = require('express-rate-limit');
 const helmet = require('helmet');
+const dotenv = require('dotenv').config();
 
 //Importation des différentes routes
 
@@ -25,6 +26,8 @@ const app = express();
 app.use(helmet({
     crossOriginResourcePolicy: false,
 }));
+
+
 
 //Gérer les problèmes de CORS (Cross-Origin Request Sharing)
 
