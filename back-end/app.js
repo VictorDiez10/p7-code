@@ -4,16 +4,16 @@ const mongoose = require('mongoose');
 const path = require('path');
 const rateLimit = require('express-rate-limit');
 const helmet = require('helmet');
-const dotenv = require('dotenv').config();
+require('dotenv').config();
 
 //Importation des différentes routes
 
 const bookRoutes = require('./routes/book');
 const userRoutes = require('./routes/user');
 
-//Connexion avec la base de données mongoose
+//Connexion avec la base de données mongoose avec dotenv
 
-mongoose.connect('mongodb+srv://john_dude:azerty12345@cluster0.xqk6saa.mongodb.net/?retryWrites=true&w=majority',
+mongoose.connect(`mongodb+srv://${process.env.DATABASE_USER}:${process.env.DATABASE_PASSWORD}@cluster0.xqk6saa.mongodb.net/?retryWrites=true&w=majority`,
     { useNewUrlParser: true,
     useUnifiedTopology: true })
     .then(() => console.log('Connexion à MongoDB réussie !'))

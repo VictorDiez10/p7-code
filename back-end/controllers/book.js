@@ -105,20 +105,35 @@ exports.createRating = (req, res, next) => {
     .then((book) => {
         let totalRatings = 0
         let finalRating = 0
-        for (let rating of book.ratings) {
-            if (rating.userId === req.body.userId) {
-                res.status(401).json({ message: 'Utilisateur a déjà noté' })
-            } else {
-                totalRatings += rating.grade
-            }
+        const userAlreadyRating = book.ratings.find((booktofind) => {booktofind.userId === req.auth.userId})
+        if (!userAlreadyRating) {
+            book.ratings.push({
+                userId : req.auth.userId,
+                grade : req.body.rating
+            })
+            let newAverageRating = book.ratings.reduce((accumulator, currentValue) => accumulator + currentValue.grade, 0)/book.ratings.length
+            book.averageRating = newAverageRating.toPrecision(2)
+            return book.save()
+        } else {
+            res.status(401).json({ message: 'Utilisateur a déjà noté' })
         }
-        totalRatings += req.body.rating
-        finalRating = totalRatings / (book.ratings.length + 1)
-        finalRating = finalRating.toPrecision(2)
+        // for (let rating of book.ratings) {
+        //     if (rating.userId === req.body.userId) {
+        //         console.log("propriétaire du livre")
+        //         res.status(401).json({ message: 'Utilisateur a déjà noté' })
+        //     } else {
+        //         totalRatings += rating.grade
+        //     }
+        // }
+        // totalRatings += req.body.rating
+        // finalRating = totalRatings / (book.ratings.length + 1)
+        // finalRating = finalRating.toPrecision(2)
+        console.log(book)
 
-        Book.updateOne({ _id: req.params.id }, { averageRating: finalRating, $push: { ratings: { userId: req.body.userId, grade: req.body.rating } } })
-            .then((book) => res.status(200).json(book))
-            .catch(error => res.status(400).json({ error }))
+        // Book.updateOne({ _id: req.params.id }, { averageRating: finalRating, $push: { ratings: { userId: req.body.userId, grade: req.body.rating } } })
+            
+            // .catch(error => res.status(400).json({ error }))
     })
-    
+    .then((book) => res.status(200).json(book))
+    .catch(error => res.status(400).json({ error }))
 }
